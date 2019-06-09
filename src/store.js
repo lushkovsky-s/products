@@ -7,6 +7,7 @@ class Store {
       name: 'Рубашка поло',
       price: 2200,
       isAvailable: true,
+      isVisible: true,
       photo: require('./assets/products_polo.png'),
       options: [
         {
@@ -22,6 +23,7 @@ class Store {
       name: 'Толстовка мягкая',
       price: 3500,
       isAvailable: true,
+      isVisible: true,
       photo: require('./assets/products_polo.png'),
       options: [
         {
@@ -43,6 +45,7 @@ class Store {
       name: 'Кепка',
       price: 1200,
       isAvailable: false,
+      isVisible: true,
       photo: require('./assets/products_polo.png'),
       options: [
         {
@@ -62,13 +65,18 @@ class Store {
 
   @computed get products() {
     const filtered = this._products.filter(product => {
-      if (this.filters.tags) {
-        const containsAllTags = this.filter.tags.every(tag => product.tags.indexOf(tag) >= 0)
-        
-        if (!containsAllTags) {
+      if (this.filters.onMainPage) {
+        if (!product.onMainPage) {
           return false
         }
       }
+
+      if (!this.filters.showNotVisible) {
+        if (!product.isVisible) {
+          return false
+        }
+      }
+
       if (this.filters.name) {
         const match = product.name.toLowerCase().indexOf(this.filters.name.toLowerCase()) >= 0
         
@@ -99,8 +107,32 @@ class Store {
     }
   }
 
-  @action updateNameFilter(newValue) {
-    this.filters = {...this.filters, name: newValue}
+  @action updateVisibility(productId, optionIdx, value) {
+    const productIdx = this._products.findIndex(product => product.id === productId)
+    let newProducts = this._products.slice()
+    
+    if (optionIdx !== undefined) {      
+      let newOptions = newProducts[productIdx].options.slice()
+      newOptions[optionIdx].isVisible = value
+      newProducts[productIdx].options = newOptions
+    } else {
+      newProducts[productIdx].isVisible = value
+    }
+
+    this._products = newProducts
+  }
+
+  @action toggleProductCheck(productId) {
+    const productIdx = this._products.findIndex(product => product.id === productId)
+    let newProducts = this._products.slice()
+
+    newProducts[productIdx].isChecked = !newProducts[productIdx].isChecked
+
+    this._products = newProducts
+  }
+
+  @action updateFilter(filterName, filterValue) {
+    this.filters = {...this.filter, [filterName]: filterValue}
   }
 
   @action checkAll() {

@@ -21,9 +21,30 @@
         placeholder="Поиск товаров"
         @input="onSearchBarInput"  
       />
+      <div class="row-filters__checkboxes-area">
+        <div class="checkbox">
+          <input 
+            type="checkbox" 
+            class="checkbox__input"
+            @change="(e) => onFilterClick('onlyMainPage', e.target.checked)"  
+          />
+          <span class="checkbox__label">На главной</span>
+        </div>
+        <div class="checkbox">
+          <input 
+            type="checkbox" 
+            class="checkbox__input"
+            @change="(e) => onFilterClick('showNotVisible', e.target.checked)" 
+          /> 
+          <span class="checkbox__label">Скрытые</span>
+        </div>
+      </div>
     </div>
     <div>
-      <ProductsTable />
+      <ProductsTable 
+        @visibilityChange="onVisibilityChange"
+        @productChecked="onProductChecked"
+      />
     </div>
   </div>
 </template>
@@ -37,8 +58,17 @@ export default {
   name: 'App',
   components: { ProductsTable, SearchBar },
   methods: {
-    onSearchBarInput: function(input) {
-      Store.updateNameFilter(input)
+    onProductChecked(productId) {
+      Store.toggleProductCheck(productId)
+    },
+    onFilterClick(filterName, filterValue) {
+      Store.updateFilter(filterName, filterValue)
+    },
+    onVisibilityChange(value, productId, optionIdx) {
+      Store.updateVisibility(productId, optionIdx, value)
+    },
+    onSearchBarInput(input) {
+      Store.updateFilter('name', input)
     }
   }
 }
@@ -109,11 +139,35 @@ h1 {
 }
 
 .row-filters__filters-button {
-  flex: 1
+  flex: 2
 }
 
 .row-filters__searchbar {
-  flex: 10
+  flex: 10;
+  margin-left: 16px;
+}
+
+.row-filters__checkboxes-area {
+  flex: 8;
+  margin-left: 16px;
+}
+
+.checkbox {
+  display: inline-block;
+  margin-top: 7px;
+  margin-right: 10px;
+  font-family: Object Sans;
+  font-size: 12px;
+}
+
+.checkbox__input {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.checkbox__label {
+  display: inline-block;
+  vertical-align: middle;
 }
 
 table {

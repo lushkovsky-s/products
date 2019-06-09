@@ -26,8 +26,7 @@ export default {
 <style scoped>
 .container {
   position: relative;
-
-  margin-left: 16px;
+  
   width: 100%;
   height: 100%;
 }
@@ -42,7 +41,7 @@ export default {
 }
 
 .input {
-  width: 100%;
+  width: calc(100% - 80px);
   height: 100%;
 
   padding: 12px 40px;

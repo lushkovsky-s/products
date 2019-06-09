@@ -28,12 +28,16 @@
     <ProductRow
         v-for="product in products"
         :key="product.id"
+        :id="product.id"
         :name="product.name"
         :price="product.price"
         :photo="product.photo"
         :isAvailable="product.isAvailable"
+        :isVisible="product.isVisible"
         :isChecked="product.isChecked"
         :options="product.options"
+        @visibilityChange="(value, productId, optionIdx) => $emit('visibilityChange', value, productId, optionIdx)"
+        @checked="$emit('productChecked', product.id)"
     />
 </table>
 </template>

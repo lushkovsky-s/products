@@ -1,7 +1,12 @@
 <template>
-  <tbody>
+  <tbody v-bind:class="{ 'checked': isChecked }">
     <tr>
-      <td><input type="checkbox" :checked="isChecked ? true : false" /></td>
+      <td>
+        <input 
+          type="checkbox" 
+          :checked="isChecked ? true : false"
+          @change="$emit('checked')" 
+        /></td>
       <td>
         <img
           v-if="photo"
@@ -32,7 +37,10 @@
         <AvailabilityIndicator :isAvailable="isAvailable" />
       </td>
       <td>
-        <VisibilityToggler />
+        <VisibilityToggler 
+          :isVisible="isVisible" 
+          @change="value => $emit('visibilityChange', value, id)" 
+        />
       </td>
       <td>
         <img src="../assets/three_dots.svg" alt="more" />
@@ -58,7 +66,12 @@
       <td><PriceIndicator :price="option.price" /></td>
       <td>{{ option.articul }}</td>
       <td><AvailabilityIndicator :isAvailable="option.isAvailable" /></td>
-      <td><VisibilityToggler /></td>
+      <td>
+        <VisibilityToggler
+          :isVisible="option.isVisible" 
+          @change="value => $emit('visibilityChange', value, id, index)" 
+        />
+      </td>
       <td><img src="../assets/three_dots.svg" alt="more" /></td>
     </tr>
   </tbody>
@@ -86,6 +99,9 @@ export default {
     }
   },
   props: {
+    id: {
+      type: Number,
+    },
     name: {
       type: String,
       required: true
@@ -94,6 +110,10 @@ export default {
       type: Number,
       required: true,
       validator: price => price >= 0
+    },
+    isVisible: {
+      type: Boolean,
+      required: true
     },
     options: {
       type: Array,
@@ -146,7 +166,7 @@ td {
   border-top: 1px solid #E8EAED;
   border-bottom: 1px solid #E8EAED;
   box-sizing: border-box;
-  border-radius: 6px;
+  /* border-radius: 6px; */
   font-family: Inter;
   font-size: 15px;
   line-height: 26px;
@@ -206,5 +226,14 @@ td {
   border-radius: 50%;
   width: 40px;
   height: 40px;
+}
+
+tbody.checked tr td {
+  background-color: #DDF5E6;
+}
+
+tbody.checked .row-expanded__cell-colapse__btn {
+  background: rgba(29, 185, 84, .15);
+  color: #535557;
 }
 </style>
